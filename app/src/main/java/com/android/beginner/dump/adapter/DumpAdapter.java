@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +41,7 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
 
     @Override
     public DumpAdapter.DumpHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.list_item, parent, false);
+        View view = inflater.inflate(R.layout.card_item, parent, false);
         return new DumpHolder(view);
     }
 
@@ -49,11 +50,11 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
         ListItem item = listData.get(position);
         holder.title.setText(item.getTitle());
         holder.subTitle.setText(item.getSubTitle());
-        if (item.isFavourite()){
-            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_on);
-        } else {
-            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_off);
-        }
+//        if (item.isFavourite()){
+//            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_on);
+//        } else {
+//            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_off);
+//        }
     }
     public void setListData(ArrayList<ListItem> exerciseList){
         this.listData.clear();
@@ -71,8 +72,10 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
         TextView title;
         TextView subTitle;
         ImageView thumbnail;
-         ImageView secondaryIcon;
-         View container;
+         //ImageView secondaryIcon;
+         //View container;
+
+        Button load;
 
         public DumpHolder(View itemView) {
             super(itemView);
@@ -80,18 +83,21 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
             title = (TextView)itemView.findViewById(R.id.lbl_item_text);
             subTitle = (TextView)itemView.findViewById(R.id.lbl_item_sub_title);
             thumbnail = (ImageView)itemView.findViewById(R.id.im_item_icon);
-            secondaryIcon = (ImageView)itemView.findViewById(R.id.im_item_icon_secondary);
-            container =itemView.findViewById(R.id.cont_item_root);
-            container.setOnClickListener(this);
-            secondaryIcon.setOnClickListener(this);
+//            secondaryIcon = (ImageView)itemView.findViewById(R.id.im_item_icon_secondary);
+//            container =itemView.findViewById(R.id.cont_item_root);
+//            container.setOnClickListener(this);
+//            secondaryIcon.setOnClickListener(this);
+
+            load = (Button) itemView.findViewById(R.id.btn_card_load);
+            load.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (view.getId() == R.id.cont_item_root){
+            if (view.getId() == R.id.btn_card_load){
                 itemClickCallback.onItemClick(getAdapterPosition());
             }else {
-                itemClickCallback.onSecondaryIconClick(getAdapterPosition());
+                //itemClickCallback.onSecondaryIconClick(getAdapterPosition());
             }
         }
     }
