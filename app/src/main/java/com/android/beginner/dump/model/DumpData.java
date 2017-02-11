@@ -9,8 +9,15 @@ import java.util.List;
 
 public class DumpData {
 
-    private static final String[] title ={"Om telolet Om", "Mantap Jiwa", "Apa aja deh "};
-    private static final int[] icon = {android.R.drawable.ic_lock_lock, android.R.drawable.ic_menu_view, android.R.drawable.ic_dialog_info};
+    private static final String[] title ={
+            "pil",
+            "strip",
+            "tablet"};
+
+    private static final int icon = android.R.drawable.ic_menu_add;
+
+    private static final String[] subTitles={"Anonnymous","Anonnymous","Anonnymous"};
+
 
 
     public static List<ListItem> getListData(){
@@ -22,12 +29,11 @@ public class DumpData {
         for (int x=0; x<4; x++){
             //buat listitem dari dummy data yang ada, kemudian tampilkan di list
 
-            for (int i = 0; i <title.length && i < icon.length; i++){
+            for (int i = 0; i <title.length; i++){
                 ListItem item = new ListItem();
                 //gunakan setter dan getter yang ada di class list item untuk menampilkan data
-
-                item.setImageResId(icon[i]);
                 item.setTitle(title[i]);
+                item.setSubTitle(subTitles[i]);
                 data.add(item);
             }
         }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.android.beginner.dump.R;
 import com.android.beginner.dump.model.ListItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,13 +22,24 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
     private List<ListItem> listData;
     private LayoutInflater inflater;
 
+    private ItemClickCallback itemClickCallback;
+
+    public interface  ItemClickCallback{
+        void onItemClick(int p);
+        void onSecondaryIconClick(int p);
+    }
+
+    public void setItemClickCallback(final ItemClickCallback itemClickCallback){
+        this.itemClickCallback = itemClickCallback;
+    }
+
     public DumpAdapter (List<ListItem> listData, Context c){
         this.inflater = LayoutInflater.from(c);
         this.listData = listData;
     }
 
     @Override
-    public DumpHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DumpAdapter.DumpHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.list_item, parent, false);
         return new DumpHolder(view);
     }
@@ -36,27 +48,51 @@ public class DumpAdapter extends RecyclerView.Adapter<DumpAdapter.DumpHolder>{
     public void onBindViewHolder(DumpHolder holder, int position) {
         ListItem item = listData.get(position);
         holder.title.setText(item.getTitle());
-        holder.icon.setImageResource(item.getImageResId());
+        holder.subTitle.setText(item.getSubTitle());
+        if (item.isFavourite()){
+            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_on);
+        } else {
+            holder.secondaryIcon.setImageResource(android.R.drawable.btn_star_big_off);
+        }
     }
+    public void setListData(ArrayList<ListItem> exerciseList){
+        this.listData.clear();
+        this.listData.addAll(exerciseList);
+    }
+
 
     @Override
     public int getItemCount() {
         return listData.size();
     }
 
-    class DumpHolder extends RecyclerView.ViewHolder{
+    class DumpHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        private TextView title;
-        private ImageView icon;
-        private View container;
+        TextView title;
+        TextView subTitle;
+        ImageView thumbnail;
+         ImageView secondaryIcon;
+         View container;
 
         public DumpHolder(View itemView) {
             super(itemView);
 
-            title = (TextView)itemView.findViewById(R.id.tv_item_icon);
-            icon = (ImageView)itemView.findViewById(R.id.iv_item_icon);
+            title = (TextView)itemView.findViewById(R.id.lbl_item_text);
+            subTitle = (TextView)itemView.findViewById(R.id.lbl_item_sub_title);
+            thumbnail = (ImageView)itemView.findViewById(R.id.im_item_icon);
+            secondaryIcon = (ImageView)itemView.findViewById(R.id.im_item_icon_secondary);
             container =itemView.findViewById(R.id.cont_item_root);
+            container.setOnClickListener(this);
+            secondaryIcon.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == R.id.cont_item_root){
+                itemClickCallback.onItemClick(getAdapterPosition());
+            }else {
+                itemClickCallback.onSecondaryIconClick(getAdapterPosition());
+            }
         }
     }
 }
