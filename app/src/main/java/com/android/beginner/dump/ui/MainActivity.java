@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.View;
+import android.widget.Button;
 
 import com.android.beginner.dump.R;
 import com.android.beginner.dump.adapter.DumpAdapter;
@@ -35,11 +38,62 @@ public class MainActivity extends AppCompatActivity implements DumpAdapter.ItemC
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new DumpAdapter(DumpData.getListData(), this);
+        adapter = new DumpAdapter(listData, this);
 
         recyclerView.setAdapter(adapter);
         adapter.setItemClickCallback(this);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createHelperCallback());
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        Button addItem = (Button) findViewById(R.id.btn_add_item);
+        addItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addItemToList();
+            }
+        });
     }
+
+    private ItemTouchHelper.Callback createHelperCallback() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
+                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                                    ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        moveItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                        return true;
+                    }
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        deleteItem(viewHolder.getAdapterPosition());
+                    }
+                };
+        return simpleItemTouchCallback;
+    }
+
+    private void addItemToList(){
+        ListItem item = DumpData.getRandomListItem();
+        listData.add(item);
+        adapter.notifyItemInserted(listData.indexOf(item));
+
+    }
+
+    private void moveItem(int oldPos,int newPos){
+        ListItem item = (ListItem) listData.get(oldPos);
+        listData.remove(oldPos);
+        listData.add(newPos, item);
+        adapter.notifyItemMoved(oldPos, newPos);
+
+    }
+
+    private void deleteItem(final int position){
+        listData.remove(position);
+        adapter.notifyItemRemoved(position);
+    }
+
+
 
     @Override
     public void onItemClick(int p) {
@@ -64,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements DumpAdapter.ItemC
         }else{
             item.setFavourite(true);
         }
-        adapter.setListData(listData);
+
         adapter.notifyDataSetChanged();
     }
 }
